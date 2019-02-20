@@ -23,6 +23,7 @@ TypeWriter.prototype.type = function() {
 	//check if the app is in the deleting state
 	if(this.isDeleting) {
 		//remove a character
+		this.txt = fullTxt.substring(0, this.txt.length - 1);
 	} else {
 		//add a character
 		this.txt = fullTxt.substring(0, this.txt.length + 1);
@@ -31,7 +32,27 @@ TypeWriter.prototype.type = function() {
 	//output whatevr is in this.text
 	this.txtElement.innerHTML = `<span class="txt">${this.txt}</span>`
 
-	setTimeout(() => this.type(), 500);
+	// Initial Type Speed, this varies
+	let typeSpeed = 300;
+
+	if(this.isDeleting) {
+		typeSpeed /= 2; //double the speed
+	}
+
+	// check whether or not the word is complete
+	if(!this.isDeleting && this.txt === fullTxt) {
+		typeSpeed = this.wait; //this will pause the app
+		this.isDeleting = true;
+	} else if(this.isDeleting && this.txt === '') {
+		//when the end is reached, move to the next work
+		this.isDeleting = false;
+		this.wordIndex++;
+
+		//pause before typing begins
+		typeSpeed = 500;
+	}
+
+	setTimeout(() => this.type(), typeSpeed);
 }
 
  //Initalize app
